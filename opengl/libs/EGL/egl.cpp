@@ -571,9 +571,9 @@ EGLBoolean egl_init_drivers_locked()
     egl_connection_t* cnx;
     egl_display_t* d = &gDisplay[0];
 
-	bool hgl = true;
+    bool hgl = true;
     if (gEGLImplSWOnly)
-		hgl = false;
+        hgl = false;
 
     cnx = &gEGLImpl[IMPL_SOFTWARE];
     if (cnx->dso == 0) {
@@ -595,6 +595,7 @@ EGLBoolean egl_init_drivers_locked()
     if (cnx->dso == 0 && hgl) {
         char value[PROPERTY_VALUE_MAX];
         property_get("debug.egl.hw", value, "1");
+        LOGE("Enabling 3D hardware acceleration...");
         if (atoi(value) != 0) {
             cnx->hooks[GLESv1_INDEX] = &gHooks[GLESv1_INDEX][IMPL_HARDWARE];
             cnx->hooks[GLESv2_INDEX] = &gHooks[GLESv2_INDEX][IMPL_HARDWARE];
@@ -609,7 +610,7 @@ EGLBoolean egl_init_drivers_locked()
                 }
             }
         } else {
-            LOGD("3D hardware acceleration is disabled");
+            LOGE("3D hardware acceleration is disabled");
         }
     }
 
@@ -665,6 +666,7 @@ EGLBoolean eglInitialize(EGLDisplay dpy, EGLint *major, EGLint *minor)
         if (major != NULL) *major = VERSION_MAJOR;
         if (minor != NULL) *minor = VERSION_MINOR;
         dp->refs++;
+        LOGE("eglInitialize returned EGL_TRUE @670");
         return EGL_TRUE;
     }
     
@@ -677,6 +679,8 @@ EGLBoolean eglInitialize(EGLDisplay dpy, EGLint *major, EGLint *minor)
         egl_connection_t* const cnx = &gEGLImpl[i];
         cnx->major = -1;
         cnx->minor = -1;
+        if (!cnx->dso)
+            LOGE("eglInitialize skipping to next implementation");
         if (!cnx->dso) 
             continue;
 
@@ -701,6 +705,7 @@ EGLBoolean eglInitialize(EGLDisplay dpy, EGLint *major, EGLint *minor)
          * same workaround should be applied to imx5x Z430 EGL as ADRENO130
          */
         if (i == IMPL_HARDWARE) {
+            LOGE("IMX5X eglInitialize() workaround");
             dp->disp[i].dpy =
                 cnx->egl.eglGetDisplay(EGL_DEFAULT_DISPLAY);
         }
@@ -708,6 +713,10 @@ EGLBoolean eglInitialize(EGLDisplay dpy, EGLint *major, EGLint *minor)
 
 
         EGLDisplay idpy = dp->disp[i].dpy;
+
+        LOGE("initializing %d dpy=%p, ver=%d.%d, cnx=%p",
+                i, idpy, cnx->major, cnx->minor, cnx);
+
         if (cnx->egl.eglInitialize(idpy, &cnx->major, &cnx->minor)) {
             //LOGD("initialized %d dpy=%p, ver=%d.%d, cnx=%p",
             //        i, idpy, cnx->major, cnx->minor, cnx);
@@ -779,8 +788,10 @@ EGLBoolean eglInitialize(EGLDisplay dpy, EGLint *major, EGLint *minor)
         dp->refs++;
         if (major != NULL) *major = VERSION_MAJOR;
         if (minor != NULL) *minor = VERSION_MINOR;
+        LOGE("eglInitialize returned EGL_TRUE @790");
         return EGL_TRUE;
     }
+    LOGE("eglInitialize returned EGL_NOT_INITIALIZED @792");
     return setError(EGL_NOT_INITIALIZED, EGL_FALSE);
 }
 

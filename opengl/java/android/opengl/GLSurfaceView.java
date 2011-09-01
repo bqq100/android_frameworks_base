@@ -157,10 +157,10 @@ import android.view.SurfaceView;
 public class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
     private final static boolean LOG_THREADS = false;
     private final static boolean LOG_PAUSE_RESUME = false;
-    private final static boolean LOG_SURFACE = false;
+    private final static boolean LOG_SURFACE = true;
     private final static boolean LOG_RENDERER = false;
     private final static boolean LOG_RENDERER_DRAW_FRAME = false;
-    private final static boolean LOG_EGL = false;
+    private final static boolean LOG_EGL = true;
     // Work-around for bug 2263168
     private final static boolean DRAW_TWICE_AFTER_SIZE_CHANGED = true;
     /**
@@ -908,7 +908,7 @@ public class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback
             if (mEglDisplay == EGL10.EGL_NO_DISPLAY) {
                 throw new RuntimeException("eglGetDisplay failed");
             }
-
+            Log.e("EglHelper", "Java eglInitialize...");
             /*
              * We can now initialize EGL for that display
              */

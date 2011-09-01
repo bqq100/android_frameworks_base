@@ -152,7 +152,7 @@ void DisplayHardware::init(uint32_t dpy)
     status_t err = EGLUtils::selectConfigForNativeWindow(
             display, attribs, mNativeWindow.get(), &config);
     LOGE_IF(err, "couldn't find an EGLConfig matching the screen format");
-    
+    LOGE("Error Code: %s", err); 
     EGLint r,g,b,a;
     eglGetConfigAttrib(display, config, EGL_RED_SIZE,   &r);
     eglGetConfigAttrib(display, config, EGL_GREEN_SIZE, &g);

@@ -135,11 +135,28 @@ public class InputManager {
             Slog.d(TAG, "Setting display #" + displayId + " size to " + width + "x" + height);
         }
         nativeSetDisplaySize(displayId, width, height);
+        setDisplayOrientation(displayId, Surface.ROTATION_0);
     }
     
     public void setDisplayOrientation(int displayId, int rotation) {
+
         if (rotation < Surface.ROTATION_0 || rotation > Surface.ROTATION_270) {
             throw new IllegalArgumentException("Invalid rotation.");
+        }
+
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                rotation = Surface.ROTATION_180;
+                break;
+            case Surface.ROTATION_90:
+                rotation = Surface.ROTATION_270;
+                break;
+            case Surface.ROTATION_180:
+                rotation = Surface.ROTATION_0;
+                break;
+            case Surface.ROTATION_270:
+                rotation = Surface.ROTATION_90;
+                break; 
         }
         
         if (DEBUG) {

@@ -1427,6 +1427,7 @@ EGLDisplay eglGetDisplay(NativeDisplayType display)
 
 EGLBoolean eglInitialize(EGLDisplay dpy, EGLint *major, EGLint *minor)
 {
+    LOGE("libagl:eglInitialize...");
     if (egl_display_t::is_valid(dpy) == EGL_FALSE)
         return setError(EGL_BAD_DISPLAY, EGL_FALSE);
 
@@ -1443,6 +1444,10 @@ EGLBoolean eglInitialize(EGLDisplay dpy, EGLint *major, EGLint *minor)
         if (major != NULL) *major = VERSION_MAJOR;
         if (minor != NULL) *minor = VERSION_MINOR;
     }
+    if (res == EGL_TRUE)
+        LOGE("libagl:eglInitialize return EGL_TRUE");
+    else
+        LOGE("libagl:eglInitialize return UNKNOWN");
     return res;
 }
 
@@ -1489,10 +1494,13 @@ EGLBoolean eglChooseConfig( EGLDisplay dpy, const EGLint *attrib_list,
                             EGLConfig *configs, EGLint config_size,
                             EGLint *num_config)
 {
-    if (egl_display_t::is_valid(dpy) == EGL_FALSE)
+    if (egl_display_t::is_valid(dpy) == EGL_FALSE){
+        LOGE("eglChooseConfig EGL_BAD_DISPLAY, EGL_FALSE (is_valid FALSE)");
         return setError(EGL_BAD_DISPLAY, EGL_FALSE);
+    }
     
     if (ggl_unlikely(num_config==0)) {
+        LOGE("eglChooseConfig EGL_BAD_PARAMETER, EGL_FALSE (ggl_unlikely 0)");
         return setError(EGL_BAD_PARAMETER, EGL_FALSE);
     }
 

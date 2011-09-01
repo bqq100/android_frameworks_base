@@ -60,19 +60,25 @@ status_t EGLUtils::selectConfigForPixelFormat(
 {
     EGLint numConfigs = -1, n=0;
 
-    if (!attrs)
+    if (!attrs){
+        LOGE("selectConfigForPixelFormat - BAD_VALUE (no attrs)");
         return BAD_VALUE;
-
-    if (outConfig == NULL)
+    }
+    if (outConfig == NULL){
+        LOGE("selectConfigForPixelFormat - BAD_VALUE (outConfig NULL)");
         return BAD_VALUE;
+    }
     
     // Get all the "potential match" configs...
-    if (eglGetConfigs(dpy, NULL, 0, &numConfigs) == EGL_FALSE)
+    if (eglGetConfigs(dpy, NULL, 0, &numConfigs) == EGL_FALSE){
+        LOGE("selectConfigForPixelFormat - BAD_VALUE (eglGetConfigs FALSE)");
         return BAD_VALUE;
+    }
 
     EGLConfig* const configs = (EGLConfig*)malloc(sizeof(EGLConfig)*numConfigs);
     if (eglChooseConfig(dpy, attrs, configs, numConfigs, &n) == EGL_FALSE) {
         free(configs);
+        LOGE("selectConfigForPixelFormat - BAD_VALUE (eglChooseConfig FALSE)");
         return BAD_VALUE;
     }
     
@@ -95,9 +101,11 @@ status_t EGLUtils::selectConfigForPixelFormat(
     
     if (i<n) {
         *outConfig = config;
+        LOGE("selectConfigForPixelFormat - NO_ERROR");
         return NO_ERROR;
     }
 
+    LOGE("selectConfigForPixelFormat - NAME_NOT_FOUND");
     return NAME_NOT_FOUND;
 }
 
@@ -110,10 +118,13 @@ status_t EGLUtils::selectConfigForNativeWindow(
     int err;
     int format;
     
-    if (!window)
+    if (!window){
+        LOGE("selectConfigForNativeWindow - BAD_VALUE (!window)");
         return BAD_VALUE;
+    }
     
     if ((err = window->query(window, NATIVE_WINDOW_FORMAT, &format)) < 0) {
+        LOGE("selectConfigForNativeWindow - err (window->query < 0)");
         return err;
     }
 

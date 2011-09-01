@@ -267,7 +267,7 @@ public abstract class WindowOrientationListener {
         private static final float ACCELERATING_LOWPASS_ALPHA =
             computeLowpassAlpha(ACCELERATING_TIME_CONSTANT_MS);
 
-        private boolean mAllow180Rotation = false;
+        private boolean mAllow180Rotation = true;
 
         private WindowOrientationListener mOrientationListener;
         private int mRotation = ROTATION_0; // Current orientation state
@@ -292,6 +292,7 @@ public abstract class WindowOrientationListener {
 
         void setAllow180Rotation(boolean allowed) {
             mAllow180Rotation = allowed;
+            mAllow180Rotation = true;
         }
 
         int getCurrentRotation(int lastRotation) {
